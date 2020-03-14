@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
-
-    <color name="colorBkashPrimary">#d21d55</color>
-    <color name="colorBkashPrimaryDark">#9E1C3B</color>
-    <color name="colorBkashAccent">#d21d55</color>
+    <color name="colorPrimary">#d21d55</color>
+    <color name="colorPrimaryDark">#9E1C3B</color>
+    <color name="colorAccent">#d21d55</color>
 </resources>

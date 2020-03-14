@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.net.http.SslError
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.util.Log
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -13,25 +12,26 @@ import android.webkit.SslErrorHandler
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.dialog_bkash_payment.*
+import kotlinx.android.synthetic.main.activity_bkash_payment.*
 import ninja.saad.bkashdemo.R
 import ninja.saad.bkashdemo.data.BkashPaymentRequest
+import ninja.saad.bkashdemo.data.Checkout
+import ninja.saad.bkashdemo.util.JSInterface
 
 class BkashPaymentActivity : AppCompatActivity() {
 
-    private lateinit var mWebView: WebView
-    private lateinit var progressBar: ProgressBar
-    private var paymentRequest = ""
+    private var request = ""
 
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
-        setContentView(R.layout.dialog_bkash_payment)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_bkash_payment)
 
-        val request = BkashPaymentRequest(intent.getStringExtra("amount"), intent.getStringExtra("intent"))
-        paymentRequest = "{paymentRequest:${Gson().toJson(request)}}"
+        val checkout: Checkout = intent.getSerializableExtra("values") as Checkout
+        val paymentRequest = BkashPaymentRequest(checkout.amount, checkout.intent)
+
+        request = Gson().toJson(paymentRequest)
 
         bkashWebView.settings.apply {
             javaScriptEnabled = true
@@ -43,10 +43,12 @@ class BkashPaymentActivity : AppCompatActivity() {
             allowUniversalAccessFromFileURLs = true
         }
 
-        bkashWebView.clearCache(true)
-        bkashWebView.isFocusableInTouchMode = true
-
-        
+        bkashWebView.apply {
+            clearCache(true)
+            isFocusableInTouchMode = true
+            bkashWebView.addJavascriptInterface(JSInterface(this@BkashPaymentActivity), "AndroidNative")
+            loadUrl("file:///android_asset/www/checkout_120.html")
+        }
 
         bkashWebView.webViewClient = object : WebViewClient(){
 
@@ -70,13 +72,12 @@ class BkashPaymentActivity : AppCompatActivity() {
 
             override fun onPageFinished(view: WebView?, url: String?) {
                 loadingProgressBar.visibility = GONE
-                topBar.visibility = VISIBLE
-                closeIv.visibility = VISIBLE
-                mWebView.let {
-                    it.loadUrl("javascript:callReconfigure($paymentRequest )")
+                bkashWebView.let {
+                    val callingPaymentRequest = "{paymentRequest:$request}"
+                    it.loadUrl("javascript:callReconfigure($callingPaymentRequest )")
                     it.loadUrl("javascript:clickPayButton()")
+                    it.loadUrl("javascript:switchToMain()")
                 }
-                progressBar.visibility = GONE
             }
         }
     }
