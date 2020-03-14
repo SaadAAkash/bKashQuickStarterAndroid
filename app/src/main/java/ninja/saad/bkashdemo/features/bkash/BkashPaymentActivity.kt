@@ -35,7 +35,6 @@ class BkashPaymentActivity : AppCompatActivity() {
 
         bkashWebView.settings.apply {
             javaScriptEnabled = true
-            javaScriptEnabled = true
             domStorageEnabled = true
             setAppCacheEnabled(false)
             cacheMode = WebSettings.LOAD_NO_CACHE
@@ -58,7 +57,7 @@ class BkashPaymentActivity : AppCompatActivity() {
 
             override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
                 Log.d("External URL: ", url)
-                //loadingProgressBar.visibility = VISIBLE
+                loadingProgressBar.visibility = VISIBLE
                 if (url == "https://www.bkash.com/terms-and-conditions") {
                     startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
                     return true
@@ -71,13 +70,12 @@ class BkashPaymentActivity : AppCompatActivity() {
             }
 
             override fun onPageFinished(view: WebView?, url: String?) {
-                loadingProgressBar.visibility = GONE
                 bkashWebView.let {
                     val callingPaymentRequest = "{paymentRequest:$request}"
                     it.loadUrl("javascript:callReconfigure($callingPaymentRequest )")
                     it.loadUrl("javascript:clickPayButton()")
-                    it.loadUrl("javascript:switchToMain()")
                 }
+                loadingProgressBar.visibility = GONE
             }
         }
     }
