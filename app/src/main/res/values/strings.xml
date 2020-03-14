@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">bKash Demo</string>
+    <string name="pay_with_bkash">Pay with bKash</string>
 </resources>

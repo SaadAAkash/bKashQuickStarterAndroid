@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width" ,="" initial-scale="1.0/">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrom=1">
+
+    <script src="file:///android_asset/www/js/jquery-1.8.3.min.js"></script>
+
+    <link rel="stylesheet" href="file:///android_asset/www/css/bootstrap.min.css">
+    <link rel="stylesheet" href="file:///android_asset/www/css/style.css">
+
+</head>
+<body style="">
+<div class="container">
+    <h3>Payment done Successfully</h3>
+    <p id="demo"></p>
+
+</div>
+
+<script type="text/javascript">
+    var queryString = decodeURIComponent(window.location.search);
+    queryString = queryString.substring(1);
+    var queries = queryString.split("&");
+    for (var i = 0; i < queries.length; i++)
+    {
+        document.write("<p>  "+queries[i]+"</p>" + "<br>");
+
+    }
+    function switchToMain(){
+        AndroidNative.switchActivity();
+    }
+
+</script>
+</body>
+</html>
