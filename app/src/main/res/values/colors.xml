@@ -4,5 +4,7 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
 
-    <color name="colorbKashBackground">#d93568</color>
+    <color name="colorBkashPrimary">#d21d55</color>
+    <color name="colorBkashPrimaryDark">#9E1C3B</color>
+    <color name="colorBkashAccent">#d21d55</color>
 </resources>
