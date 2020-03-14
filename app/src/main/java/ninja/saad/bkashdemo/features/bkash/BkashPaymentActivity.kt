@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.net.http.SslError
 import android.os.Bundle
-import android.util.Log
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.webkit.SslErrorHandler
@@ -17,22 +16,24 @@ import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_bkash_payment.*
 import ninja.saad.bkashdemo.R
 import ninja.saad.bkashdemo.data.BkashPaymentRequest
-import ninja.saad.bkashdemo.data.Checkout
 import ninja.saad.bkashdemo.util.JSInterface
 
 class BkashPaymentActivity : AppCompatActivity() {
 
-    private var request = ""
+    private var paymentRequest = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bkash_payment)
 
-        val checkout: Checkout = intent.getSerializableExtra("values") as Checkout
-        val paymentRequest = BkashPaymentRequest(checkout.amount, checkout.intent)
+        val request = BkashPaymentRequest(intent.getStringExtra("amount"), intent.getStringExtra("intent"))
+        paymentRequest = "{paymentRequest:${Gson().toJson(request)}}"
 
-        request = Gson().toJson(paymentRequest)
+        initBkashWebView()
+        initBkashWebViewClient(paymentRequest)
+    }
 
+    private fun initBkashWebView() {
         bkashWebView.settings.apply {
             javaScriptEnabled = true
             domStorageEnabled = true
@@ -48,7 +49,9 @@ class BkashPaymentActivity : AppCompatActivity() {
             bkashWebView.addJavascriptInterface(JSInterface(this@BkashPaymentActivity), "AndroidNative")
             loadUrl("file:///android_asset/www/checkout_120.html")
         }
+    }
 
+    private fun initBkashWebViewClient(paymentRequest: String) {
         bkashWebView.webViewClient = object : WebViewClient(){
 
             override fun onReceivedSslError(view: WebView?, handler: SslErrorHandler, error: SslError?) {
@@ -56,7 +59,6 @@ class BkashPaymentActivity : AppCompatActivity() {
             }
 
             override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-                Log.d("External URL: ", url)
                 loadingProgressBar.visibility = VISIBLE
                 if (url == "https://www.bkash.com/terms-and-conditions") {
                     startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
@@ -71,12 +73,12 @@ class BkashPaymentActivity : AppCompatActivity() {
 
             override fun onPageFinished(view: WebView?, url: String?) {
                 bkashWebView.let {
-                    val callingPaymentRequest = "{paymentRequest:$request}"
-                    it.loadUrl("javascript:callReconfigure($callingPaymentRequest )")
+                    it.loadUrl("javascript:callReconfigure($paymentRequest )")
                     it.loadUrl("javascript:clickPayButton()")
                 }
                 loadingProgressBar.visibility = GONE
             }
         }
     }
+
 }
