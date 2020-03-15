@@ -58,9 +58,8 @@ bKashQuickStarterAndroid/
 │       ├── gradle-wrapper.jar
 │       └── gradle-wrapper.properties
 ├── Resources/
-│   ├── Screenshots
-│   │   └── ... 
-│   └── mvvm-architecture-lyst
+│   └── Screenshots
+│       └── ... 
 ├── build.gradle
 ├── _config.yml
 ├── gradle.properties
